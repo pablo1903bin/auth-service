@@ -149,7 +149,7 @@
 	</repositories>
 
 	<build>
-		<finalName>auth</finalName>
+		<finalName>auth-service</finalName>
 		<plugins>
 			<!-- Spring Boot Maven Plugin -->
 			<plugin>

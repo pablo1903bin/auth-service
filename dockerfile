@@ -5,10 +5,10 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # Copia el archivo JAR generado al contenedor
-COPY target/auth.jar app.jar
+COPY target/auth-service.jar app.jar
 
 # Expone el puerto en el que se ejecuta la aplicación
-EXPOSE 8080
+EXPOSE 8081
 
 # Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
