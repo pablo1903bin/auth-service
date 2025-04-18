@@ -1,0 +1,59 @@
+server:
+  port: 0
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: true
+
+  doc:
+    swagger-ui:
+      path: /swagger-ui.html
+      enabled: true
+
+logging:
+  level:
+    com.tms: INFO
+
+eureka:
+  client:
+    enabled: true
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+  instance:
+    instance-id: "${spring.application.name}:${random.value}"
+
+app:
+  jwt:
+    secret: RandomSecretKey123456789!RandomSecretKey123456789!RandomSecretKey123456789!
+    expiration-in-ms: 604800000
+
+service:
+  security:
+    secure-key-username: temporal001
+    secure-key-password: pablorosasSecurePassword!
+
+curso:
+  service:
+    url: http://localhost:8080/gateway
+
+compras:
+  service:
+    url: http://localhost:4444
