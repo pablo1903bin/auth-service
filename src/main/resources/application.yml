@@ -1,23 +1,32 @@
 server:
-  port: 0
+  port: 8082
   servlet:
-    context-path: /
+    context-path: /auth-service
 
 spring:
   application:
     name: auth-service
 
+  profiles:
+    default: dev
+
+  config:
+    import: ${SPRING_CONFIG_IMPORT} # Importa la configuración externa desde config-server
+    #import: optional:configserver:http://192.168.100.23:7777/
+    #import: optional:configserver:http://localhost:7777/
+
+
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        format-sql: true
     hibernate:
       ddl-auto: update
     show-sql: false
@@ -36,7 +45,8 @@ eureka:
   client:
     enabled: true
     service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+      #defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+      defaultZone: ${eureka.registry-server}
   instance:
     instance-id: "${spring.application.name}:${random.value}"
 
