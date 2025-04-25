@@ -47,51 +47,34 @@ public class UserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
 
-    /**
-     * @return ID del usuario.
-     */
+
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id Establece el ID del usuario.
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @return Entidad User asociada.
-     */
+
     public User getUser() {
         return user;
     }
 
-    /**
-     * @param user Establece la entidad User asociada.
-     */
     public void setUser(User user) {
         this.user = user;
     }
 
-    /**
-     * @param username Establece el nombre de usuario.
-     */
     public void setUsername(String username) {
         this.username = username;
     }
 
-    /**
-     * @param password Establece la contraseña.
-     */
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    /**
-     * @param authorities Establece los roles o permisos del usuario.
-     */
+
     public void setAuthorities(Set<GrantedAuthority> authorities) {
         this.authorities = authorities;
     }
@@ -152,11 +135,6 @@ public class UserPrincipal implements UserDetails {
         return true;
     }
 
-    /**
-     * Representación en cadena del objeto UserPrincipal.
-     *
-     * @return Cadena que contiene detalles básicos del usuario.
-     */
     @Override
     public String toString() {
         return "UserPrincipal [id=" + id + ", username=" + username + ", authorities=" + authorities + "]\n";

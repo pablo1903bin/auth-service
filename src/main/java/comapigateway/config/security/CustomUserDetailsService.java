@@ -3,6 +3,8 @@ package comapigateway.config.security;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import comapigateway.entities.User; // Entidad que representa al usuario en la base de datos.
 import comapigateway.services.UserService; // Servicio para manejar operaciones relacionadas con usuarios.
+
 import comapigateway.utils.SecurityUtils; // Utilidad para convertir roles a objetos GrantedAuthority.
 
 /**
@@ -20,7 +23,7 @@ import comapigateway.utils.SecurityUtils; // Utilidad para convertir roles a obj
  */
 @Service // Marca esta clase como un servicio manejado por Spring.
 public class CustomUserDetailsService implements UserDetailsService {
-
+	private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
     // Servicio para buscar usuarios en la base de datos.
     @Autowired
     private UserService userService;
@@ -34,10 +37,17 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    	
+        logger.info("[CustomUserDetailsService] loadUserByUsername...");
+        
         // Busca al usuario en la base de datos utilizando el servicio.
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("El usuario no fue encontrado: " + username));
-
+    	//Buscar un usuario en la DB por su username y devolver los detalles necesarios para que Spring los compare.
+    	//Este objeto tiene todo lo que guarde de el en la DB.
+        User user = userService.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
+        
+        logger.info("[CustomUserDetailsService] loadUserByUsername Usuario..." + user.toString());
+        
+        
         // Crea un conjunto de autoridades (roles) asignadas al usuario.
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(SecurityUtils.convertToAuthority(user.getRole().name()));

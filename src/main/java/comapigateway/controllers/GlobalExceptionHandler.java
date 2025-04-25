@@ -108,19 +108,19 @@ public class GlobalExceptionHandler {
         //logger.error("Error: Usuario no encontrado. Detalle: {}", ex.getMessage());
 
         // Construye una respuesta con el código 404 y el mensaje de error.
-        ApiResponse<String> response = new ApiResponse<>("ERROR", ex.getMessage(), null );
+        ApiResponse<String> response = new ApiResponse<>("ERROR", "Credenciales inválidas", null );
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiResponse<String>> handleAuthenticationException(AuthenticationException ex) {
-        ApiResponse<String> response = new ApiResponse<>("ERROR", "Credenciales inválidas: " + ex.getMessage(), null);
+        ApiResponse<String> response = new ApiResponse<>("ERROR", "Credenciales inválidas", null);
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<String>> handleRuntimeException(RuntimeException ex) {
-        ApiResponse<String> response = new ApiResponse<>("ERROR", "Error inesperado: " + ex.getMessage(), null);
+        ApiResponse<String> response = new ApiResponse<>("ERROR", "Error inesperado" + ex.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     

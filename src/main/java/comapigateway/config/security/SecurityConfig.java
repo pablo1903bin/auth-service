@@ -51,8 +51,7 @@ public class SecurityConfig {
      * @throws Exception Si ocurre un error al obtener el AuthenticationManager.
      */
 	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
 		return authenticationConfiguration.getAuthenticationManager();
 	}
@@ -78,10 +77,19 @@ public class SecurityConfig {
      */
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		logger.info("Configurando AuthenticationManagerBuilder");
+		//"Dame el configurador de autenticación para decirte cómo manejar usuarios y passwords".
 		AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
 
+		//Usa este UserDetailsService (customUserDetailsService) para buscar usuarios.
+		     // ---> Aquí es donde Spring irá a buscar en la base de datos por un username.
+		     // ---> Usa este PasswordEncoder (passwordEncoder) para comparar contraseñas. Generalmente usas BCryptPasswordEncoder.
+		/*📌 Aquí defino la lógica de autenticación: cómo Spring debe obtener al usuario y validar la contraseña. */
+		logger.info("Configurando AuthenticationManagerBuilder que use CustomUserDetailsService para buscar usuarios");
+		
 		auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder);
 
+		//  -->   "Ya terminé de decirte cómo autenticar, ahora créate y queda listo para usarse".
 		AuthenticationManager authenticationManager = auth.build();
 
         http.cors(withDefaults());
@@ -127,5 +135,16 @@ public class SecurityConfig {
 			}
 		};
 	}
+/*↓ Pides el builder de autenticación
+AuthenticationManagerBuilder auth = http.getSharedObject(...)
 
+↓ Le dices cómo autenticar (con qué servicio y qué encoder)
+auth.userDetailsService(...).passwordEncoder(...)
+
+↓ Le dices: listo, construye el manager de autenticación
+AuthenticationManager authenticationManager = auth.build();
+
+↓ Finalmente lo registras en la configuración de seguridad
+http.authenticationManager(authenticationManager);
+*/
 }

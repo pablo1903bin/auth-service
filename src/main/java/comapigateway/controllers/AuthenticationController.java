@@ -19,6 +19,7 @@ import comapigateway.services.UserService; // Servicio que maneja la lógica rel
  * Controlador REST para manejar las operaciones de autenticación.
  * Proporciona endpoints para el registro ("sign-up") y el inicio de sesión ("sign-in") de usuarios.
  */
+
 @RestController
 @RequestMapping("/authentication") // Prefijo para todas las rutas definidas en este controlador.
 public class AuthenticationController {
@@ -42,12 +43,15 @@ public class AuthenticationController {
      */
     @PostMapping("sign-up") // Define una ruta POST para el registro de usuarios.
     public ResponseEntity<?> signUp(@RequestBody User user) {
+    	
         // Verifica si el nombre de usuario ya existe.
         if (userService.findByUsername(user.getUsername()).isPresent()) {
+        	
             // Construye una respuesta con el código 404 y el mensaje de error.
             ApiResponse<String> response = new ApiResponse<>("409", "El usuario ya existe", null);
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
+        
         // Verifica si el correo electrónico ya existe.
         if (userService.findByEmail(user.getEmail()).isPresent()) {
             ApiResponse<String> response = new ApiResponse<>("409", "El correo ya existe", null);

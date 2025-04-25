@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -30,54 +32,78 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Autowired
 	private UserRepository userRepository;
 
+	private final static String mesjError = "Credenciales inválidas";
+
+	/*
+	 * Cuando hago login, Spring llama automáticamente a mi loadUserByUsername(),
+	 * que busca el usuario, y le devuelve un objeto UserDetails con el password
+	 * hash. Luego Spring compara la contraseña enviada con la almacenada usando el
+	 * PasswordEncoder, y si coincide, me autentica.
+	 */
 	@Override
 	public UserDTO signInAndReturnJWT(User signInRequest) {
 
-		//logger.info("Validando usuario entrante...");
-		//logger.info("Usuario: " + signInRequest.getUsername());
-		//logger.info("Pass: " + signInRequest.getPassword());
+		logger.info("[AuthenticationServiceImpl] signInAndReturnJWT Validando usuario entrante...");
+		// logger.info("Usuario: " + signInRequest.getUsername());
+		// logger.info("Pass: " + signInRequest.getPassword());
 
 		try {
-			// Buscar usuario en la base de datos
-			User user = userRepository.findByUsername(signInRequest.getUsername())
-					.orElseThrow(() -> new UsernameNotFoundException(
-							"El usuario no fue encontrado: " + signInRequest.getUsername()));
 
-			//logger.info("Usuario encontrado: " + user.toString());
+			// logger.info("Usuario encontrado: " + user.toString());
+			// 📌UsernamePasswordAuthenticationToken Es una hoja que llenas con tu nombre y
+			// contraseña, para que seguridad (Spring) la revise.
+			// 📌 Este objeto es solo un formulario con datos. Aún no está aprobado.solo son
+			// los datos de la DB del usuario almacenado
+			UsernamePasswordAuthenticationToken intentoAutenticacion = new UsernamePasswordAuthenticationToken(
+					signInRequest.getUsername(), signInRequest.getPassword());
 
-			// Crear un token de autenticación
-			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-					user.getUsername(), signInRequest.getPassword());
+			// Busca tu registro en el sistema (con
+			// CustomUserDetailsService.loadUserByUsername("pablo"))
+			// Lee tu clave almacenada (la encriptada que está en la base)
+			// Compara tu clave con la que acabas de decir (con PasswordEncoder.matches)
+			// ¿Coinciden?
 
-			// Autenticar al usuario
-			Authentication authentication = authenticationManager.authenticate(authenticationToken);
+			Authentication resultado = authenticationManager.authenticate(intentoAutenticacion);
 
-			// Obtener los detalles del usuario autenticado
-			UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-			String jwt = jwtProvider.generateToken(userPrincipal);
+			logger.info("[AuthenticationServiceImpl] signInAndReturnJWT  Usuario autenticado: "
+					+ resultado.getPrincipal().toString());
 
-			User authenticatedUser = userPrincipal.getUser();
-			authenticatedUser.setToken(jwt);
+			UserPrincipal userPrincipal = (UserPrincipal) resultado.getPrincipal(); // Obtener los detalles del usuario
+																					// autenticado
 
-			//logger.info("Autenticación exitosa. Generando JWT...");
+			String jwt = jwtProvider.generateToken(userPrincipal); // Genarar un token usando el usuario principal
 
-			// Crear y devolver un UserDTO en lugar de la entidad User
-			return new UserDTO(authenticatedUser.getId(), authenticatedUser.getUsername(), authenticatedUser.getName(),
-					authenticatedUser.getApellido(), authenticatedUser.getTelefono(), authenticatedUser.getEmail(),
-					authenticatedUser.getFechaCreacion(), authenticatedUser.getRole(), authenticatedUser.getToken());
+			User usuarioAuthenticado = userPrincipal.getUser();
+			usuarioAuthenticado.setToken(jwt);
 
-		} catch (UsernameNotFoundException ex) {
-		//	logger.error("Error: El usuario no fue encontrado: " + signInRequest.getUsername(), ex);
-			throw ex; // Rethrow para manejarlo en un nivel superior si es necesario
+			// logger.info("Autenticación exitosa. Generando JWT...");
 
-		} catch (org.springframework.security.core.AuthenticationException ex) {
-			//logger.error("Error en la autenticación: Credenciales inválidas.", ex);
+			return new UserDTO(usuarioAuthenticado.getId(), usuarioAuthenticado.getUsername(),
+					usuarioAuthenticado.getName(), usuarioAuthenticado.getApellido(), usuarioAuthenticado.getTelefono(),
+					usuarioAuthenticado.getEmail(), usuarioAuthenticado.getFechaCreacion(),
+					usuarioAuthenticado.getRole(), usuarioAuthenticado.getToken());
+
+		} catch (BadCredentialsException ex) {
+			logger.error(
+					"[AuthenticationServiceImpl] BadCredentialsException Usuario no encontrado. " + ex.getMessage());
+			// Contraseña incorrecta o usuario no encontrado
+			throw ex;
+
+		} catch (AuthenticationException ex) {
+			logger.error("[AuthenticationServiceImpl] AuthenticationException " + ex.getMessage());
 			throw ex; // Maneja errores de autenticación específicos
 
 		} catch (Exception ex) {
-			//logger.error("Error inesperado durante el inicio de sesión.", ex);
+			logger.error("[AuthenticationServiceImpl] Exception" + ex.getMessage());
 			throw new RuntimeException("Error inesperado durante el inicio de sesión. Por favor, intente más tarde.");
 		}
 	}
-
+	
+	/*
+	 * “El AuthenticationManager autentica usando el UserDetailsService, compara
+	 * contraseñas con el PasswordEncoder, y me devuelve un Authentication listo. No
+	 * necesito buscar usuarios dos veces, ni validar contraseñas a mano.”
+	 * 
+	 * "El AuthenticationManager se encarga de todo: buscar usuario, validar contraseña, y devolverme el usuario autenticado si todo está bien."
+	 */
 }

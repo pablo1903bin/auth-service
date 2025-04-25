@@ -23,7 +23,7 @@ import io.jsonwebtoken.Jwts; // Clase para trabajar con JWT.
 import io.jsonwebtoken.SignatureAlgorithm; // Algoritmo de firma para JWT.
 import io.jsonwebtoken.security.Keys; // Herramientas para manejar claves de seguridad.
 
-@Component // Declara esta clase como un componente de Spring para inyección de dependencias.
+@Component
 public class JwtProviderImpl implements JwtProvider {
 
     // Secreto JWT configurado en el archivo de propiedades.
@@ -144,7 +144,7 @@ public class JwtProviderImpl implements JwtProvider {
      * @return Objeto Claims o null si no se puede extraer.
      */
     private Claims extractClaims(HttpServletRequest request) {
-        // Extrae el token desde la cabecera Authorization.
+        // Extrae el token desde la cabecera Authorization. token limpio
         String token = SecurityUtils.extractAuthTokenFromRequest(request);
 
         if (token == null) {
