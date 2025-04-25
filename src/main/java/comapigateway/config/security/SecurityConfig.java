@@ -83,7 +83,6 @@ public class SecurityConfig {
 		auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder);
 
 		AuthenticationManager authenticationManager = auth.build();
-		logger.info("Configurando seguridad!   #####################");
 
         http.cors(withDefaults());
         http.csrf(csrf -> csrf.disable());
@@ -91,7 +90,7 @@ public class SecurityConfig {
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(requests -> requests
-                .antMatchers("/api/authentication/sign-in", "/api/authentication/sign-up").permitAll()
+                .antMatchers("/authentication/sign-in", "/authentication/sign-up").permitAll()
                 .antMatchers("/swagger-ui/index.html", "/swagger-ui/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/authentication/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/recordatorio/todos").permitAll()

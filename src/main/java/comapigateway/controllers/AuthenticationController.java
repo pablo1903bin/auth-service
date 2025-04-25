@@ -20,7 +20,7 @@ import comapigateway.services.UserService; // Servicio que maneja la lógica rel
  * Proporciona endpoints para el registro ("sign-up") y el inicio de sesión ("sign-in") de usuarios.
  */
 @RestController
-@RequestMapping("api/authentication") // Prefijo para todas las rutas definidas en este controlador.
+@RequestMapping("/authentication") // Prefijo para todas las rutas definidas en este controlador.
 public class AuthenticationController {
 
     // Logger para registrar mensajes relacionados con las operaciones de autenticación.

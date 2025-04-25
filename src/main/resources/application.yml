@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 0
   servlet:
     context-path: /auth-service
 
@@ -8,13 +8,13 @@ spring:
     name: auth-service
 
   profiles:
-    default: dev
+    active: dev
 
   config:
-    import: ${SPRING_CONFIG_IMPORT} # Importa la configuración externa desde config-server
-    #import: optional:configserver:http://192.168.100.23:7777/
+    #import: ${SPRING_CONFIG_IMPORT} # Importa la configuración externa desde config-server
+    import: optional:configserver:http://192.168.100.23:7777/
     #import: optional:configserver:http://localhost:7777/
-
+    #import: optional:configserver:http://localhost:7777/
 
   datasource:
     url: ${db.url}
@@ -46,7 +46,9 @@ eureka:
     enabled: true
     service-url:
       #defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
-      defaultZone: ${eureka.registry-server}
+      #defaultZone: ${eureka.registry-server}
+      defaultZone: http://localhost:8761/eureka/
+
   instance:
     instance-id: "${spring.application.name}:${random.value}"
 
