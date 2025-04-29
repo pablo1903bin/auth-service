@@ -19,7 +19,7 @@ import comapigateway.services.UserService; // Servicio para manejar lógica rela
  * Define endpoints para cambiar el rol de un usuario y obtener la información del usuario actual.
  */
 @RestController // Indica que esta clase es un controlador REST y devuelve respuestas JSON.
-@RequestMapping("/api/user") // Prefijo de la URL para todos los endpoints de este controlador.
+@RequestMapping("/user") // Prefijo de la URL para todos los endpoints de este controlador.
 public class UserController {
 
     // Inyección del servicio UserService para manejar la lógica de negocio relacionada con usuarios.
@@ -33,7 +33,7 @@ public class UserController {
      * @param role El nuevo rol que se asignará al usuario.
      * @return Una respuesta con estado 200 (OK) si el cambio fue exitoso.
      */
-    @PutMapping("change/{role}") // Define una ruta PUT con un parámetro de rol.
+    @PutMapping("/change/{role}") // Define una ruta PUT con un parámetro de rol.
     public ResponseEntity<?> changeRole(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Role role) {
         // Cambia el rol del usuario autenticado utilizando el servicio.
         userService.changeRole(role, userPrincipal.getUsername());
