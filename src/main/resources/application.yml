@@ -11,13 +11,12 @@ spring:
     active: dev
 
   config:
-<<<<<<< HEAD
+
     import: ${SPRING_CONFIG_IMPORT} # Importa la configuración externa desde config-server
     #import: optional:configserver:http://192.168.100.23:7777/
-=======
     #import: ${SPRING_CONFIG_IMPORT} # Importa la configuración externa desde config-server
-    import: optional:configserver:http://192.168.100.48:7777/
->>>>>>> 9ecb211 (agrega al usuario entity token_fcm)
+    #import: optional:configserver:http://192.168.100.48:7777/
+
     #import: optional:configserver:http://localhost:7777/
     #import: optional:configserver:http://localhost:7777/
 
@@ -50,13 +49,12 @@ eureka:
   client:
     enabled: true
     service-url:
-<<<<<<< HEAD
+
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
       #defaultZone: ${eureka.registry-server}
-=======
       #defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
-      defaultZone: ${eureka.registry-server}
->>>>>>> 9ecb211 (agrega al usuario entity token_fcm)
+      #defaultZone: ${eureka.registry-server}
+
       #defaultZone: http://localhost:8761/eureka/
 
   instance:
